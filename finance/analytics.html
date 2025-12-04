@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Finance Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div id="sidebarContainer"></div>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div id="headerContainer"></div>
+
+            <div class="page-header">
+                <div class="page-title-section">
+                    <h1 class="page-title-main">Analytics</h1>
+                    <p class="page-subtitle">Visualize your spending patterns and financial insights.</p>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <section class="summary-cards">
+                <div class="summary-card">
+                    <div class="card-content">
+                        <h3 class="card-label">Top Category</h3>
+                        <p class="card-amount" id="topCategory">-</p>
+                    </div>
+                    <div class="card-icon-small income-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 12L4 8H6.67V2H9.33V8H12L8 12Z" fill="#10B981"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-content">
+                        <h3 class="card-label">Total Income (YTD)</h3>
+                        <p class="card-amount income" id="ytdIncome">$0.00</p>
+                    </div>
+                    <div class="card-icon-small income-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 12L4 8H6.67V2H9.33V8H12L8 12Z" fill="#10B981"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-content">
+                        <h3 class="card-label">Total Expense (YTD)</h3>
+                        <p class="card-amount expense" id="ytdExpense">$0.00</p>
+                    </div>
+                    <div class="card-icon-small expense-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 4L12 8H9.33V14H6.67V8H4L8 4Z" fill="#EF4444"/>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <div class="analytics-grid">
+                <!-- Income vs Expense Chart -->
+                <section class="chart-section">
+                    <h2 class="section-title">Income vs Expense</h2>
+                    <div class="chart-card">
+                        <div class="chart-container">
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Spending by Category Chart -->
+                <section class="chart-section">
+                    <h2 class="section-title">Spending by Category</h2>
+                    <div class="chart-card">
+                        <div class="chart-container">
+                            <canvas id="expenseChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Summary Section -->
+            <section class="analytics-summary">
+                <h2 class="section-title">Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <h4 class="summary-label">Savings Rate</h4>
+                        <p class="summary-value income" id="savingsRate">0%</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4 class="summary-label">Average Monthly Expense</h4>
+                        <p class="summary-value" id="avgMonthlyExpense">$0.00</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4 class="summary-label">Average Monthly Income</h4>
+                        <p class="summary-value income" id="avgMonthlyIncome">$0.00</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="sidebar.js"></script>
+    <script src="common.js"></script>
+    <script src="analytics.js"></script>
+</body>
+</html>
+
