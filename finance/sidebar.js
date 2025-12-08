@@ -104,7 +104,11 @@ function initAuth() {
         logoutBtn.addEventListener('click', async () => {
             try {
                 await auth.signOut();
-                window.location.href = 'index.html';
+                // Clear any cached user data
+                sessionStorage.clear();
+                localStorage.removeItem('lastUserEmail');
+                // Replace current history entry to prevent back button access
+                window.location.replace('index.html');
             } catch (error) {
                 console.error('Logout error:', error);
             }

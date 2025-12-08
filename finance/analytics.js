@@ -11,13 +11,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Wait for auth state
     auth.onAuthStateChanged((user) => {
         if (!user) {
-            window.location.href = 'index.html';
+            window.location.replace('index.html');
             return;
         }
         loadAnalytics();
     });
     
     initAuth();
+});
+
+// Prevent unauthorized access via browser back button
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        // Page was restored from cache (user clicked back)
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.replace('index.html');
+            }
+        });
+    }
 });
 
 function loadAnalytics() {

@@ -155,11 +155,14 @@ auth.onAuthStateChanged((user) => {
         // User is signed in - redirect to dashboard
         window.location.href = 'dashboard.html';
     } else {
-        // User is signed out
+        // User is signed out - show auth container
         authContainer.style.display = 'flex';
         if (dashboardContainer) {
             dashboardContainer.style.display = 'none';
         }
+        // Clear any cached user data
+        sessionStorage.clear();
+        localStorage.removeItem('lastUserEmail');
     }
 });
 

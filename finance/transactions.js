@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Wait for auth state before loading
     auth.onAuthStateChanged((user) => {
         if (!user) {
-            window.location.href = 'index.html';
+            window.location.replace('index.html');
             return;
         }
         
@@ -34,6 +34,18 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Also call initAuth for logout button
     initAuth();
+});
+
+// Prevent unauthorized access via browser back button
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        // Page was restored from cache (user clicked back)
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.replace('index.html');
+            }
+        });
+    }
 });
 
 function initSearch() {
