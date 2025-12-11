@@ -1,10 +1,6 @@
-// FORCE AUTH PAGE FIRST - NO EXCEPTIONS
-const authContainer = document.getElementById('authContainer');
-const dashboardContainer = document.getElementById('dashboardContainer');
-
-// Show auth immediately
-authContainer.style.display = 'flex';
-dashboardContainer.style.display = 'none';
+// FORCE AUTH PAGE - NO DASHBOARD ACCESS WITHOUT LOGIN
+document.getElementById('authContainer').style.display = 'flex';
+document.getElementById('dashboardContainer').style.display = 'none';
 document.body.style.visibility = 'visible';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('signInPassword').value;
         
         try {
-            await auth.signInWithEmailAndPassword(email, password);
+            await signInWithEmailAndPassword(auth, email, password);
         } catch (error) {
             document.getElementById('authError').textContent = error.message;
             document.getElementById('authError').classList.add('show');
@@ -31,12 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('signUpPassword').value;
         
         try {
-            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-            await userCredential.user.updateProfile({ displayName: name });
-            await db.collection('users').doc(userCredential.user.uid).set({
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(userCredential.user, { displayName: name });
+            await setDoc(doc(db, 'users', userCredential.user.uid), {
                 name: name,
                 email: email,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                createdAt: serverTimestamp()
             });
         } catch (error) {
             document.getElementById('signUpError').textContent = error.message;
@@ -61,29 +57,24 @@ document.addEventListener('DOMContentLoaded', () => {
     
 });
 
-// Auth state observer - STRICT AUTHENTICATION REQUIRED
-auth.onAuthStateChanged((user) => {
+// Auth observer - MUST LOGIN FIRST
+onAuthStateChanged(auth, (user) => {
     if (user) {
-        // User authenticated - show dashboard
-        authContainer.style.display = 'none';
-        dashboardContainer.style.display = 'flex';
-        
-        // Update user info
+        // Show dashboard only after login
+        document.getElementById('authContainer').style.display = 'none';
+        document.getElementById('dashboardContainer').style.display = 'flex';
         document.getElementById('userName').textContent = user.displayName || 'User';
         document.getElementById('userEmail').textContent = user.email;
-        
-        // Prevent back button
-        history.pushState(null, null, location.href);
     } else {
-        // No user - FORCE auth page
-        authContainer.style.display = 'flex';
-        dashboardContainer.style.display = 'none';
+        // Force auth page
+        document.getElementById('authContainer').style.display = 'flex';
+        document.getElementById('dashboardContainer').style.display = 'none';
     }
 });
 
 // Logout
 document.getElementById('logoutBtn').addEventListener('click', () => {
-    auth.signOut();
+    signOut(auth);
     sessionStorage.clear();
     localStorage.clear();
 });
