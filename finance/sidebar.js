@@ -78,13 +78,10 @@ function renderHeader() {
     `;
 }
 
-// Initialize auth state and user info
-function initAuth() {
+// Initialize user info display
+function initUserInfo() {
     auth.onAuthStateChanged((user) => {
-        if (!user) {
-            window.location.href = 'index.html';
-            return;
-        }
+        if (!user) return;
         
         // Update user info in header
         const userNameEl = document.getElementById('userName');
@@ -101,17 +98,15 @@ function initAuth() {
     // Logout button
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
-            try {
-                await auth.signOut();
-                // Clear any cached user data
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut().then(() => {
                 sessionStorage.clear();
-                localStorage.removeItem('lastUserEmail');
-                // Replace current history entry to prevent back button access
+                localStorage.clear();
                 window.location.replace('index.html');
-            } catch (error) {
+            }).catch((error) => {
                 console.error('Logout error:', error);
-            }
+                window.location.replace('index.html');
+            });
         });
     }
 }

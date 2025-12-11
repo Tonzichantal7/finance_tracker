@@ -1,5 +1,25 @@
 // Common utility functions shared across pages
 
+// Global authentication guard
+function initAuth() {
+    auth.onAuthStateChanged((user) => {
+        if (!user) {
+            window.location.replace('index.html');
+        }
+    });
+}
+
+// Prevent back button access after logout
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.replace('index.html');
+            }
+        });
+    }
+});
+
 // Transaction categories
 const categories = {
     income: ['Salary', 'Freelance', 'Investment', 'Bonus', 'Other'],

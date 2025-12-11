@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initPasswordModal();
     });
     
-    initAuth();
+    initUserInfo();
 });
 
 // Prevent unauthorized access via browser back button
@@ -259,9 +259,13 @@ async function deleteAccount() {
         batch.delete(db.collection('users').doc(userUid));
         await batch.commit();
 
+        // Clear all local data
+        sessionStorage.clear();
+        localStorage.clear();
+        
         await auth.signOut();
         alert('Account deleted successfully!');
-        window.location.href = 'index.html';
+        window.location.replace('index.html');
         
     } catch (error) {
         if (error.code === 'auth/requires-recent-login') {
@@ -285,5 +289,18 @@ async function reauthenticateAndDelete(password) {
     } catch (error) {
         alert('Authentication failed. Please check your password and try again.');
     }
+}
+
+// Enhanced logout function
+function logout() {
+    auth.signOut().then(() => {
+        sessionStorage.clear();
+        localStorage.clear();
+        window.location.replace('index.html');
+    }).catch((error) => {
+        console.error('Logout error:', error);
+        // Force redirect even if logout fails
+        window.location.replace('index.html');
+    });
 }
 
