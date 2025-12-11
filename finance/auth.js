@@ -1,11 +1,13 @@
-// Simple authentication system
+// FORCE AUTH PAGE FIRST - NO EXCEPTIONS
+const authContainer = document.getElementById('authContainer');
+const dashboardContainer = document.getElementById('dashboardContainer');
+
+// Show auth immediately
+authContainer.style.display = 'flex';
+dashboardContainer.style.display = 'none';
+document.body.style.visibility = 'visible';
+
 document.addEventListener('DOMContentLoaded', () => {
-    const authContainer = document.getElementById('authContainer');
-    const dashboardContainer = document.getElementById('dashboardContainer');
-    
-    // ALWAYS show auth page first
-    authContainer.style.display = 'flex';
-    dashboardContainer.style.display = 'none';
     
     // Sign In
     document.getElementById('signInFormElement').addEventListener('submit', async (e) => {
@@ -57,37 +59,38 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('signInForm').classList.remove('active');
     });
     
-    // Auth state observer - MUST authenticate first
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            // User authenticated - show dashboard
-            authContainer.style.display = 'none';
-            dashboardContainer.style.display = 'flex';
-            
-            // Update user info
-            document.getElementById('userName').textContent = user.displayName || 'User';
-            document.getElementById('userEmail').textContent = user.email;
-            
-            // Prevent back button
-            history.pushState(null, null, location.href);
-        } else {
-            // No user - stay on auth page
-            authContainer.style.display = 'flex';
-            dashboardContainer.style.display = 'none';
-        }
-    });
-    
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        auth.signOut();
-        sessionStorage.clear();
-        localStorage.clear();
-    });
-    
-    // Prevent back button after login
-    window.addEventListener('popstate', () => {
-        if (auth.currentUser) {
-            history.pushState(null, null, location.href);
-        }
-    });
+});
+
+// Auth state observer - STRICT AUTHENTICATION REQUIRED
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        // User authenticated - show dashboard
+        authContainer.style.display = 'none';
+        dashboardContainer.style.display = 'flex';
+        
+        // Update user info
+        document.getElementById('userName').textContent = user.displayName || 'User';
+        document.getElementById('userEmail').textContent = user.email;
+        
+        // Prevent back button
+        history.pushState(null, null, location.href);
+    } else {
+        // No user - FORCE auth page
+        authContainer.style.display = 'flex';
+        dashboardContainer.style.display = 'none';
+    }
+});
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    auth.signOut();
+    sessionStorage.clear();
+    localStorage.clear();
+});
+
+// Prevent back button after login
+window.addEventListener('popstate', () => {
+    if (auth.currentUser) {
+        history.pushState(null, null, location.href);
+    }
 });

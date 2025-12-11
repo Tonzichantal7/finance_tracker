@@ -39,8 +39,6 @@ window.addEventListener('beforeunload', () => {
     }
 });
 
-// Auth handled by auth.js
-
 // Transaction categories
 const categories = {
     income: ['Salary', 'Freelance', 'Investment', 'Bonus', 'Other'],
