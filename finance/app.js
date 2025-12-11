@@ -39,9 +39,12 @@ window.addEventListener('beforeunload', () => {
     }
 });
 
+// Force auth page first - before Firebase loads
+if (authContainer) authContainer.style.display = 'flex';
+if (dashboardContainer) dashboardContainer.style.display = 'none';
+
 // Check auth on page load
 document.addEventListener('DOMContentLoaded', () => {
-    // Show auth by default
     authContainer.style.display = 'flex';
     dashboardContainer.style.display = 'none';
 });
