@@ -188,94 +188,8 @@ function initSettingsForms() {
     }
 
     if (deleteBtn) {
-        deleteBtn.addEventListener('click', async () => {
-            if (!confirm('Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently deleted.')) {
-                return;
-            }
-
-            const user = auth.currentUser;
-            if (!user) {
-                alert('You must be logged in to delete your account');
-                return;
-            }
-
-            const userUid = user.uid; // Store UID before deletion
-            const userEmail = user.email; // Store email for logging
-
-            try {
-                console.log('Starting account deletion for user:', userUid);
-                
-                // IMPORTANT: Try to delete Firebase Auth account FIRST
-                // This way if it fails, we don't lose Firestore data
-                console.log('Attempting to delete Firebase Auth account...');
-                try {
-                    await user.delete();
-                    console.log('Firebase Auth account deleted successfully');
-                } catch (authError) {
-                    console.error('Auth deletion error:', authError);
-                    if (authError.code === 'auth/requires-recent-login') {
-                        alert('For security reasons, Firebase requires recent authentication to delete your account.\n\nPlease log out and log back in, then try deleting your account again.\n\nYour data has NOT been deleted.');
-                        return; // Don't proceed with Firestore deletion
-                    } else {
-                        // Other auth errors - still try to proceed but warn user
-                        throw authError; // Re-throw to be caught by outer catch
-                    }
-                }
-                
-                // Only delete Firestore data if Auth deletion succeeded
-                console.log('Deleting Firestore data...');
-                const batch = db.batch();
-                
-                // Delete all transactions
-                const transactionsSnapshot = await db.collection('transactions')
-                    .where('userId', '==', userUid)
-                    .get();
-                
-                console.log(`Found ${transactionsSnapshot.size} transactions to delete`);
-                transactionsSnapshot.forEach((doc) => {
-                    batch.delete(doc.ref);
-                });
-
-                // Delete user document
-                const userRef = db.collection('users').doc(userUid);
-                batch.delete(userRef);
-
-                await batch.commit();
-                console.log('Firestore data deleted successfully');
-
-                // Sign out to clear local session
-                await auth.signOut();
-                console.log('User signed out');
-
-                alert('Account deleted successfully! You will be redirected to the login page.');
-                
-                // Redirect to login page
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1000);
-                
-            } catch (error) {
-                console.error('Error deleting account:', error);
-                console.error('Error code:', error.code);
-                console.error('Error message:', error.message);
-                
-                // Check if Auth account was deleted but Firestore deletion failed
-                // In that case, try to clean up what we can
-                if (error.code === 'auth/user-token-expired' || error.code === 'auth/user-not-found') {
-                    // Auth account might already be deleted, try to delete Firestore data with admin-like approach
-                    // But we can't do this from client side, so just inform user
-                    alert('Account deletion partially completed. Some data may remain. Please contact support if you continue to see issues.');
-                    await auth.signOut();
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
-                if (error.code === 'auth/requires-recent-login') {
-                    alert('For security reasons, you need to log out and log back in before deleting your account. Please try again after logging in.');
-                } else {
-                    alert('Error deleting account: ' + error.message + '\n\nError code: ' + error.code + '\n\nPlease try logging out and logging back in, then try again.');
-                }
-            }
+        deleteBtn.addEventListener('click', () => {
+            showDeleteConfirmation();
         });
     }
 
@@ -311,5 +225,65 @@ function savePreferences() {
             console.error('Error saving preferences:', error);
             alert('Error saving preferences. Please try again.');
         });
+}
+
+function showDeleteConfirmation() {
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.')) {
+        deleteAccount();
+    }
+}
+
+async function deleteAccount() {
+    const user = auth.currentUser;
+    if (!user) {
+        alert('You must be logged in to delete your account');
+        return;
+    }
+
+    const userUid = user.uid;
+
+    try {
+        await user.delete();
+        
+        // Delete Firestore data
+        const batch = db.batch();
+        
+        const transactionsSnapshot = await db.collection('transactions')
+            .where('userId', '==', userUid)
+            .get();
+        
+        transactionsSnapshot.forEach((doc) => {
+            batch.delete(doc.ref);
+        });
+
+        batch.delete(db.collection('users').doc(userUid));
+        await batch.commit();
+
+        await auth.signOut();
+        alert('Account deleted successfully!');
+        window.location.href = 'index.html';
+        
+    } catch (error) {
+        if (error.code === 'auth/requires-recent-login') {
+            const password = prompt('For security, please enter your password to confirm account deletion:');
+            if (password) {
+                await reauthenticateAndDelete(password);
+            }
+        } else {
+            alert('Error deleting account: ' + error.message);
+        }
+    }
+}
+
+async function reauthenticateAndDelete(password) {
+    const user = auth.currentUser;
+    const credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
+    
+    try {
+        await user.reauthenticateWithCredential(credential);
+        await deleteAccount();
+    } catch (error) {
+        alert('Authentication failed. Please check your password and try again.');
+    }
 }
 
