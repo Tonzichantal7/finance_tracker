@@ -39,14 +39,14 @@ window.addEventListener('beforeunload', () => {
     }
 });
 
-// Force auth page first - before Firebase loads
-if (authContainer) authContainer.style.display = 'flex';
-if (dashboardContainer) dashboardContainer.style.display = 'none';
+// ALWAYS show auth page first - no exceptions
+document.body.style.visibility = 'hidden';
 
-// Check auth on page load
+// Wait for DOM then show auth page
 document.addEventListener('DOMContentLoaded', () => {
     authContainer.style.display = 'flex';
     dashboardContainer.style.display = 'none';
+    document.body.style.visibility = 'visible';
 });
 
 // Transaction categories
@@ -174,28 +174,32 @@ logoutBtn.addEventListener('click', async () => {
     }
 });
 
-// Auth State Observer
+// Auth State Observer - STRICT authentication required
 auth.onAuthStateChanged((user) => {
+    // ALWAYS show auth page first
+    authContainer.style.display = 'flex';
+    dashboardContainer.style.display = 'none';
+    
     if (user) {
-        // User is signed in - show dashboard
-        authContainer.style.display = 'none';
-        dashboardContainer.style.display = 'flex';
-        
-        // Update user info
-        const userNameEl = document.getElementById('userName');
-        const userEmailEl = document.getElementById('userEmail');
-        if (userNameEl) userNameEl.textContent = user.displayName || user.email?.split('@')[0] || 'User';
-        if (userEmailEl) userEmailEl.textContent = user.email || '';
-        
-        // Load transactions
-        loadTransactions();
-        
-        // Prevent back button to auth page
-        history.pushState(null, null, location.href);
+        // Only after successful authentication, show dashboard
+        setTimeout(() => {
+            authContainer.style.display = 'none';
+            dashboardContainer.style.display = 'flex';
+            
+            // Update user info
+            const userNameEl = document.getElementById('userName');
+            const userEmailEl = document.getElementById('userEmail');
+            if (userNameEl) userNameEl.textContent = user.displayName || user.email?.split('@')[0] || 'User';
+            if (userEmailEl) userEmailEl.textContent = user.email || '';
+            
+            // Load transactions
+            loadTransactions();
+            
+            // Prevent back button to auth page
+            history.pushState(null, null, location.href);
+        }, 100);
     } else {
-        // User is signed out - show auth container
-        authContainer.style.display = 'flex';
-        dashboardContainer.style.display = 'none';
+        // No user - stay on auth page
         sessionStorage.clear();
         localStorage.clear();
     }
