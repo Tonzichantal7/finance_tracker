@@ -39,15 +39,13 @@ window.addEventListener('beforeunload', () => {
     }
 });
 
-// ALWAYS show auth page first - no exceptions
-document.body.style.visibility = 'hidden';
-
-// Wait for DOM then show auth page
-document.addEventListener('DOMContentLoaded', () => {
-    authContainer.style.display = 'flex';
-    dashboardContainer.style.display = 'none';
-    document.body.style.visibility = 'visible';
-});
+// Force auth page immediately
+if (document.getElementById('authContainer')) {
+    document.getElementById('authContainer').style.display = 'flex';
+}
+if (document.getElementById('dashboardContainer')) {
+    document.getElementById('dashboardContainer').style.display = 'none';
+}
 
 // Transaction categories
 const categories = {
@@ -174,32 +172,25 @@ logoutBtn.addEventListener('click', async () => {
     }
 });
 
-// Auth State Observer - STRICT authentication required
+// Auth State Observer
 auth.onAuthStateChanged((user) => {
-    // ALWAYS show auth page first
-    authContainer.style.display = 'flex';
-    dashboardContainer.style.display = 'none';
-    
     if (user) {
-        // Only after successful authentication, show dashboard
-        setTimeout(() => {
-            authContainer.style.display = 'none';
-            dashboardContainer.style.display = 'flex';
-            
-            // Update user info
-            const userNameEl = document.getElementById('userName');
-            const userEmailEl = document.getElementById('userEmail');
-            if (userNameEl) userNameEl.textContent = user.displayName || user.email?.split('@')[0] || 'User';
-            if (userEmailEl) userEmailEl.textContent = user.email || '';
-            
-            // Load transactions
-            loadTransactions();
-            
-            // Prevent back button to auth page
-            history.pushState(null, null, location.href);
-        }, 100);
+        // User authenticated - show dashboard
+        authContainer.style.display = 'none';
+        dashboardContainer.style.display = 'flex';
+        
+        // Update user info
+        const userNameEl = document.getElementById('userName');
+        const userEmailEl = document.getElementById('userEmail');
+        if (userNameEl) userNameEl.textContent = user.displayName || user.email?.split('@')[0] || 'User';
+        if (userEmailEl) userEmailEl.textContent = user.email || '';
+        
+        loadTransactions();
+        history.pushState(null, null, location.href);
     } else {
-        // No user - stay on auth page
+        // No user - show auth page
+        authContainer.style.display = 'flex';
+        dashboardContainer.style.display = 'none';
         sessionStorage.clear();
         localStorage.clear();
     }
