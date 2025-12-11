@@ -27,7 +27,24 @@ const transactionCategory = document.getElementById('transactionCategory');
 const transactionDate = document.getElementById('transactionDate');
 
 // Set today's date as default
-transactionDate.valueAsDate = new Date();
+if (transactionDate) {
+    transactionDate.valueAsDate = new Date();
+}
+
+// Security: Prevent unauthorized access
+window.addEventListener('beforeunload', () => {
+    if (!auth.currentUser) {
+        sessionStorage.clear();
+        localStorage.clear();
+    }
+});
+
+// Check auth on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Show auth by default
+    authContainer.style.display = 'flex';
+    dashboardContainer.style.display = 'none';
+});
 
 // Transaction categories
 const categories = {
@@ -144,25 +161,47 @@ googleSignUp.addEventListener('click', async () => {
 logoutBtn.addEventListener('click', async () => {
     try {
         await auth.signOut();
+        sessionStorage.clear();
+        localStorage.clear();
+        // Force page reload to clear state
+        window.location.reload();
     } catch (error) {
         console.error('Logout error:', error);
+        window.location.reload();
     }
 });
 
 // Auth State Observer
 auth.onAuthStateChanged((user) => {
     if (user) {
-        // User is signed in - redirect to dashboard
-        window.location.href = 'dashboard.html';
+        // User is signed in - show dashboard
+        authContainer.style.display = 'none';
+        dashboardContainer.style.display = 'flex';
+        
+        // Update user info
+        const userNameEl = document.getElementById('userName');
+        const userEmailEl = document.getElementById('userEmail');
+        if (userNameEl) userNameEl.textContent = user.displayName || user.email?.split('@')[0] || 'User';
+        if (userEmailEl) userEmailEl.textContent = user.email || '';
+        
+        // Load transactions
+        loadTransactions();
+        
+        // Prevent back button to auth page
+        history.pushState(null, null, location.href);
     } else {
         // User is signed out - show auth container
         authContainer.style.display = 'flex';
-        if (dashboardContainer) {
-            dashboardContainer.style.display = 'none';
-        }
-        // Clear any cached user data
+        dashboardContainer.style.display = 'none';
         sessionStorage.clear();
-        localStorage.removeItem('lastUserEmail');
+        localStorage.clear();
+    }
+});
+
+// Prevent back button after login
+window.addEventListener('popstate', () => {
+    if (auth.currentUser) {
+        history.pushState(null, null, location.href);
     }
 });
 
