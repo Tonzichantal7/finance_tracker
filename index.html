@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Tracker - Manage Your Money</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="auth-container" id="authContainer">
+        <div class="auth-wrapper">
+            <!-- Left Marketing Section -->
+            <div class="auth-marketing">
+                <div class="marketing-content">
+                    <div class="logo-icon">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                            <rect width="48" height="48" rx="12" fill="#E6F7F0"/>
+                            <path d="M16 32L20 28L26 34L32 24" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h1>Manage Your Money</h1>
+                    <p>Track expenses, visualize spending patterns, and take control of your finances with our intuitive personal finance tracker.</p>
+                    <ul class="feature-list">
+                        <li>Real-time expense tracking</li>
+                        <li>Smart analytics & insights</li>
+                        <li>Export & backup your data</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Auth Form Section -->
+            <div class="auth-form-section">
+                <div class="auth-card">
+                    <div class="auth-tabs">
+                        <button class="tab-button active" id="signInTab">Sign In</button>
+                        <button class="tab-button" id="signUpTab">Create Account</button>
+                    </div>
+
+                    <!-- Sign In Form -->
+                    <div class="auth-form active" id="signInForm">
+                        <form id="signInFormElement">
+                            <div class="form-group">
+                                <label for="signInEmail">Email</label>
+                                <div class="input-wrapper">
+                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M2.5 6.66667L10 11.6667L17.5 6.66667M3.33333 15H16.6667C17.5871 15 18.3333 14.2538 18.3333 13.3333V6.66667C18.3333 5.74619 17.5871 5 16.6667 5H3.33333C2.41286 5 1.66667 5.74619 1.66667 6.66667V13.3333C1.66667 14.2538 2.41286 15 3.33333 15Z" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <input type="email" id="signInEmail" placeholder="you@example.com" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="signInPassword">Password</label>
+                                <div class="input-wrapper">
+                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M15.8333 9.16667H4.16667C3.24619 9.16667 2.5 9.91286 2.5 10.8333V16.6667C2.5 17.5871 3.24619 18.3333 4.16667 18.3333H15.8333C16.7538 18.3333 17.5 17.5871 17.5 16.6667V10.8333C17.5 9.91286 16.7538 9.16667 15.8333 9.16667Z" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M5.83333 9.16667V5.83333C5.83333 4.72827 6.27232 3.66846 7.05372 2.88706C7.83512 2.10565 8.89493 1.66667 10 1.66667C11.1051 1.66667 12.1649 2.10565 12.9463 2.88706C13.7277 3.66846 14.1667 4.72827 14.1667 5.83333V9.16667" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <input type="password" id="signInPassword" placeholder="••••••••" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Sign In</button>
+                            <div class="divider">
+                                <span>Or continue with</span>
+                            </div>
+                            <button type="button" class="btn-google" id="googleSignIn">
+                                <svg width="18" height="18" viewBox="0 0 18 18">
+                                    <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
+                                    <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+                                    <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.348 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/>
+                                    <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z"/>
+                                </svg>
+                                Google
+                            </button>
+                        </form>
+                        <div id="authError" class="error-message"></div>
+                    </div>
+
+                    <!-- Sign Up Form -->
+                    <div class="auth-form" id="signUpForm">
+                        <form id="signUpFormElement">
+                            <div class="form-group">
+                                <label for="signUpName">Name</label>
+                                <div class="input-wrapper">
+                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M10 10C12.3012 10 14.1667 8.13451 14.1667 5.83333C14.1667 3.53215 12.3012 1.66667 10 1.66667C7.69881 1.66667 5.83333 3.53215 5.83333 5.83333C5.83333 8.13451 7.69881 10 10 10Z" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M17.1583 18.3333C17.1583 15.1083 13.95 12.5 10 12.5C6.04999 12.5 2.84166 15.1083 2.84166 18.3333" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <input type="text" id="signUpName" placeholder="John Doe" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="signUpEmail">Email</label>
+                                <div class="input-wrapper">
+                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M2.5 6.66667L10 11.6667L17.5 6.66667M3.33333 15H16.6667C17.5871 15 18.3333 14.2538 18.3333 13.3333V6.66667C18.3333 5.74619 17.5871 5 16.6667 5H3.33333C2.41286 5 1.66667 5.74619 1.66667 6.66667V13.3333C1.66667 14.2538 2.41286 15 3.33333 15Z" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <input type="email" id="signUpEmail" placeholder="you@example.com" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="signUpPassword">Password</label>
+                                <div class="input-wrapper">
+                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M15.8333 9.16667H4.16667C3.24619 9.16667 2.5 9.91286 2.5 10.8333V16.6667C2.5 17.5871 3.24619 18.3333 4.16667 18.3333H15.8333C16.7538 18.3333 17.5 17.5871 17.5 16.6667V10.8333C17.5 9.91286 16.7538 9.16667 15.8333 9.16667Z" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M5.83333 9.16667V5.83333C5.83333 4.72827 6.27232 3.66846 7.05372 2.88706C7.83512 2.10565 8.89493 1.66667 10 1.66667C11.1051 1.66667 12.1649 2.10565 12.9463 2.88706C13.7277 3.66846 14.1667 4.72827 14.1667 5.83333V9.16667" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <input type="password" id="signUpPassword" placeholder="••••••••" required minlength="6">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Create Account</button>
+                            <div class="divider">
+                                <span>Or continue with</span>
+                            </div>
+                            <button type="button" class="btn-google" id="googleSignUp">
+                                <svg width="18" height="18" viewBox="0 0 18 18">
+                                    <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
+                                    <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+                                    <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.348 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/>
+                                    <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z"/>
+                                </svg>
+                                Google
+                            </button>
+                        </form>
+                        <div id="signUpError" class="error-message"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard (hidden initially) -->
+    <div class="dashboard-container" id="dashboardContainer" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h1 class="brand-title">Finance</h1>
+                <p class="brand-subtitle">Personal Tracker</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <rect x="3" y="3" width="6" height="6" rx="1" fill="currentColor"/>
+                        <rect x="11" y="3" width="6" height="6" rx="1" fill="currentColor"/>
+                        <rect x="3" y="11" width="6" height="6" rx="1" fill="currentColor"/>
+                        <rect x="11" y="11" width="6" height="6" rx="1" fill="currentColor"/>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-page="transactions">
+                    <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M2.5 5L10 10L17.5 5M3.33333 15H16.6667C17.5871 15 18.3333 14.2538 18.3333 13.3333V6.66667C18.3333 5.74619 17.5871 5 16.6667 5H3.33333C2.41286 5 1.66667 5.74619 1.66667 6.66667V13.3333C1.66667 14.2538 2.41286 15 3.33333 15Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                    <span>Transactions</span>
+                </a>
+                <a href="#" class="nav-item" data-page="categories">
+                    <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M7.5 7.5H12.5M7.5 10H12.5M7.5 12.5H10M3.33333 5.83333H16.6667C17.5871 5.83333 18.3333 6.57952 18.3333 7.5V15.8333C18.3333 16.7538 17.5871 17.5 16.6667 17.5H3.33333C2.41286 17.5 1.66667 16.7538 1.66667 15.8333V7.5C1.66667 6.57952 2.41286 5.83333 3.33333 5.83333Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                    <span>Categories</span>
+                </a>
+                <a href="#" class="nav-item" data-page="analytics">
+                    <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M3.33333 15L3.33333 12.5M8.33333 15L8.33333 8.33333M13.3333 15L13.3333 5M16.6667 15L16.6667 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                    <span>Analytics</span>
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <path d="M16.0917 13.3083L15.8333 13.5167L13.6917 15.6583L13.4833 15.9167C13.175 16.2917 12.6583 16.325 12.3083 15.9917L10.575 14.4167C10.4333 14.3 10.2417 14.2583 10.0583 14.3L9.39167 14.4583C8.875 14.575 8.325 14.3083 8.04167 13.8333L7.16667 12.325C6.925 11.9083 7.01667 11.3833 7.375 11.0833L8.04167 10.5167C8.19167 10.3917 8.28333 10.2 8.29167 10L8.43333 9.33333C8.53333 8.81667 8.3 8.29167 7.875 8.04167L6.36667 7.16667C5.95 6.925 5.425 7.01667 5.125 7.375L4.55833 8.04167C4.43333 8.19167 4.24167 8.28333 4.04167 8.29167L3.375 8.43333C2.85833 8.53333 2.33333 8.3 2.08333 7.875L1.20833 6.36667C0.966667 5.95 1.05833 5.425 1.41667 5.125L2.08333 4.55833C2.23333 4.43333 2.275 4.24167 2.20833 4.05833L1.80833 2.66667C1.64167 2.19167 1.88333 1.66667 2.35833 1.5L3.75 1.1C4.225 0.933333 4.75 1.175 4.91667 1.65L5.25 2.70833C5.31667 2.89167 5.45833 3.03333 5.64167 3.1L6.7 3.43333C7.175 3.6 7.40833 4.11667 7.24167 4.59167L6.84167 5.98333C6.775 6.16667 6.81667 6.35833 6.94167 6.50833L7.50833 7.175C7.80833 7.53333 7.71667 8.05833 7.3 8.3L8.175 9.80833C8.41667 10.225 8.325 10.75 7.96667 11.05L7.3 11.6167C7.15 11.7417 7.05833 11.9333 7.05 12.1333L6.90833 12.8C6.80833 13.3167 7.04167 13.8417 7.46667 14.0917L8.975 14.9667C9.39167 15.2083 9.91667 15.1167 10.2167 14.7583L10.7833 14.0917C10.9333 13.9667 11.125 13.925 11.3083 13.9917L12.7 14.3917C13.175 14.5583 13.7 14.3167 13.8667 13.8417L14.2667 12.45C14.3333 12.2667 14.475 12.125 14.6583 12.0583L15.7167 11.725C16.1917 11.5583 16.7167 11.8 16.8833 12.275L17.2833 13.6667C17.35 13.85 17.3083 14.0417 17.1833 14.1917L16.6167 14.8583C16.3167 15.2167 16.4083 15.7417 16.825 15.9833L18.3333 16.8583C18.75 17.1 18.8417 17.625 18.4833 17.925L17.8167 18.4917C17.6667 18.6167 17.625 18.8083 17.6917 18.9917L18.0917 20.3833C18.2583 20.8583 18.0167 21.3833 17.5417 21.55L16.15 21.95C15.675 22.1167 15.15 21.875 14.9833 21.4L14.65 20.3417C14.5833 20.1583 14.4417 20.0167 14.2583 19.95L13.2 19.6167C12.725 19.45 12.4917 18.9333 12.6583 18.4583L13.0583 17.0667C13.125 16.8833 13.0833 16.6917 12.9583 16.5417L12.3917 15.875C12.0917 15.5167 12.1833 14.9917 12.6 14.75L13.775 14.0833" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            
+            <button class="btn-signout" id="logoutBtn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M6 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10.6667 11.3333L14 8L10.6667 4.66667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Sign Out
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="main-header">
+                <h1 class="page-title">Dashboard</h1>
+                <div class="user-info" id="userInfo">
+                    <div class="user-details">
+                        <span class="user-name" id="userName">John Doe</span>
+                        <span class="user-email" id="userEmail">john@example.com</span>
+                    </div>
+                    <div class="user-avatar">
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                            <circle cx="20" cy="20" r="20" fill="#E6F7F0"/>
+                            <path d="M20 20C22.7614 20 25 17.7614 25 15C25 12.2386 22.7614 10 20 10C17.2386 10 15 12.2386 15 15C15 17.7614 17.2386 20 20 20Z" fill="#10B981"/>
+                            <path d="M20 22.5C15.5817 22.5 11.85 25.1 10 28.75C10 29.9441 10.5268 31.0897 11.4645 31.8936C12.4021 32.6974 13.6739 33.0833 15 33.0833H25C26.3261 33.0833 27.5979 32.6974 28.5355 31.8936C29.4732 31.0897 30 29.9441 30 28.75C28.15 25.1 24.4183 22.5 20 22.5Z" fill="#10B981"/>
+                        </svg>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Summary Cards -->
+            <section class="summary-cards">
+                <div class="summary-card">
+                    <div class="card-icon balance-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" fill="#10B981"/>
+                            <path d="M12 6V8M12 16V18M9 10H10.5C11.3284 10 12 10.6716 12 11.5C12 12.3284 11.3284 13 10.5 13H9M9 10H8M9 13H10.5C11.3284 13 12 13.6716 12 14.5C12 15.3284 11.3284 16 10.5 16H9M9 13H8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-label">Total Balance</h3>
+                        <p class="card-amount" id="totalBalance">$0.00</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon income-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M7 14L12 9L17 14" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M5 10H19" stroke="#10B981" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-label">This Month Income</h3>
+                        <p class="card-amount" id="monthlyIncome">$0.00</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon expense-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M7 10L12 15L17 10" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M5 14H19" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-label">This Month Expense</h3>
+                        <p class="card-amount" id="monthlyExpense">$0.00</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Balance Trend Chart -->
+            <section class="chart-section">
+                <h2 class="section-title">Balance Trend</h2>
+                <div class="chart-card">
+                    <div class="chart-container">
+                        <canvas id="balanceChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Transactions -->
+            <section class="transactions-section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Transactions</h2>
+                    <button class="btn-add" id="addTransactionBtn">Add Transaction</button>
+                </div>
+                <div class="transactions-list" id="transactionsList">
+                    <!-- Transactions will be dynamically inserted here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div class="modal" id="transactionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Transaction</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label for="transactionType">Type</label>
+                    <select id="transactionType" required>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionAmount">Amount</label>
+                    <input type="number" id="transactionAmount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionCategory">Category</label>
+                    <select id="transactionCategory" required>
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionDescription">Description</label>
+                    <input type="text" id="transactionDescription" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionDate">Date</label>
+                    <input type="date" id="transactionDate" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancelTransaction">Cancel</button>
+                    <button type="submit" class="btn-primary">Add Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
