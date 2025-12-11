@@ -39,13 +39,7 @@ window.addEventListener('beforeunload', () => {
     }
 });
 
-// Force auth page immediately
-if (document.getElementById('authContainer')) {
-    document.getElementById('authContainer').style.display = 'flex';
-}
-if (document.getElementById('dashboardContainer')) {
-    document.getElementById('dashboardContainer').style.display = 'none';
-}
+// Auth handled by auth.js
 
 // Transaction categories
 const categories = {
