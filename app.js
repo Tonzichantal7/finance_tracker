@@ -25,6 +25,8 @@ const monthlyExpense = document.getElementById('monthlyExpense');
 const userEmail = document.getElementById('userEmail');
 const transactionCategory = document.getElementById('transactionCategory');
 const transactionDate = document.getElementById('transactionDate');
+const welcomeMessage = document.getElementById('welcomeMessage');
+const getStartedBtn = document.getElementById('getStartedBtn');
 
 // Set today's date as default
 transactionDate.valueAsDate = new Date();
@@ -103,6 +105,7 @@ signUpFormElement.addEventListener('submit', async (e) => {
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
         signUpError.classList.remove('show');
+        showWelcomeMessage();
     } catch (error) {
         signUpError.textContent = error.message;
         signUpError.classList.add('show');
@@ -126,12 +129,14 @@ googleSignUp.addEventListener('click', async () => {
         const result = await auth.signInWithPopup(googleProvider);
         const user = result.user;
         const userDoc = await db.collection('users').doc(user.uid).get();
-        if (!userDoc.exists) {
+        const isNewUser = !userDoc.exists;
+        if (isNewUser) {
             await db.collection('users').doc(user.uid).set({
                 name: user.displayName,
                 email: user.email,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
+            showWelcomeMessage();
         }
         signUpError.classList.remove('show');
     } catch (error) {
@@ -147,6 +152,18 @@ logoutBtn.addEventListener('click', async () => {
     } catch (error) {
         console.error('Logout error:', error);
     }
+});
+
+// Show Welcome Message
+function showWelcomeMessage() {
+    signUpForm.style.display = 'none';
+    signInForm.style.display = 'none';
+    welcomeMessage.style.display = 'block';
+}
+
+// Get Started Button
+getStartedBtn.addEventListener('click', () => {
+    // Redirect will happen automatically via auth state observer
 });
 
 // Auth State Observer
@@ -452,4 +469,17 @@ function formatDate(dateString) {
         day: 'numeric' 
     });
 }
+
+// Reset forms when switching tabs
+signInTab.addEventListener('click', () => {
+    welcomeMessage.style.display = 'none';
+    signUpForm.style.display = 'block';
+    signInForm.style.display = 'block';
+});
+
+signUpTab.addEventListener('click', () => {
+    welcomeMessage.style.display = 'none';
+    signUpForm.style.display = 'block';
+    signInForm.style.display = 'block';
+});
 
