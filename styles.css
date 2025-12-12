@@ -561,12 +561,18 @@ body {
     }
     
     .auth-marketing {
-        min-height: auto;
-        padding: 32px 24px;
+        display: none;
     }
     
     .auth-form-section {
-        padding: 32px 24px;
+        padding: 24px 16px;
+    }
+    
+    .auth-card {
+        max-width: 100%;
+        margin: 0;
+        box-shadow: none;
+        border-radius: 0;
     }
     
     .sidebar {
@@ -577,14 +583,17 @@ body {
     
     .dashboard-main {
         margin-left: 0;
+        padding: 16px;
     }
     
     .summary-cards {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
 
     .filters-grid {
         grid-template-columns: 1fr;
+        gap: 12px;
     }
 
     .page-header {
@@ -607,6 +616,142 @@ body {
 
     .categories-grid {
         grid-template-columns: 1fr;
+    }
+
+    .main-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .user-info {
+        align-self: flex-end;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .transaction-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .transaction-item-left {
+        width: 100%;
+    }
+
+    .chart-container {
+        height: 300px;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 16px;
+    }
+
+    .modal-content form {
+        padding: 16px;
+    }
+
+    .modal-header {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 640px) {
+    .auth-form-section {
+        padding: 16px;
+    }
+
+    .auth-form {
+        padding: 24px 16px;
+    }
+
+    .dashboard-main {
+        padding: 12px;
+    }
+
+    .summary-card {
+        padding: 16px;
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+
+    .card-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .card-amount {
+        font-size: 24px;
+    }
+
+    .transaction-item {
+        padding: 12px;
+    }
+
+    .transaction-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+
+    .transaction-amount {
+        font-size: 16px;
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+
+    .btn-add {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .page-title {
+        font-size: 20px;
+    }
+
+    .section-title {
+        font-size: 18px;
+    }
+
+    .user-details {
+        display: none;
+    }
+
+    .filters-card {
+        padding: 16px;
+    }
+
+    .search-input {
+        font-size: 16px;
+    }
+
+    .form-group input,
+    .form-group select {
+        font-size: 16px;
+        padding: 14px 14px 14px 44px;
+    }
+
+    .btn-primary {
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    .btn-google {
+        padding: 14px;
+        font-size: 16px;
     }
 }
 
@@ -941,6 +1086,31 @@ body {
 @media (max-width: 768px) {
     .categories-grid {
         grid-template-columns: 1fr;
+    }
+
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .category-card {
+        padding: 16px;
+    }
+
+    .chart-card {
+        padding: 16px;
+    }
+
+    .transactions-section {
+        padding: 16px;
+    }
+
+    .categories-section {
+        padding: 16px;
     }
 }
 

@@ -470,16 +470,5 @@ function formatDate(dateString) {
     });
 }
 
-// Reset forms when switching tabs
-signInTab.addEventListener('click', () => {
-    welcomeMessage.style.display = 'none';
-    signUpForm.style.display = 'block';
-    signInForm.style.display = 'block';
-});
 
-signUpTab.addEventListener('click', () => {
-    welcomeMessage.style.display = 'none';
-    signUpForm.style.display = 'block';
-    signInForm.style.display = 'block';
-});
 

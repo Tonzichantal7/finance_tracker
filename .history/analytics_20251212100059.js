@@ -24,10 +24,12 @@ function loadAnalytics() {
     const user = auth.currentUser;
     if (!user) return;
 
+    // Use onSnapshot for real-time updates
     db.collection('transactions')
         .where('userId', '==', user.uid)
-        .onSnapshot((snapshot) => {
-            const categoryData = {};
+        .get()
+        .then((snapshot) => {
+            const categoryExpenses = {};
             const monthlyData = {};
             let ytdIncome = 0;
             let ytdExpense = 0;
@@ -38,13 +40,14 @@ function loadAnalytics() {
             snapshot.forEach((doc) => {
                 const transaction = doc.data();
                 const date = new Date(transaction.date);
-                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                const monthKey = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
                 const year = date.getFullYear();
 
-                // All categories (income and expense)
-                const categoryKey = `${transaction.category} (${transaction.type})`;
-                categoryData[categoryKey] = 
-                    (categoryData[categoryKey] || 0) + transaction.amount;
+                // Category expenses
+                if (transaction.type === 'expense') {
+                    categoryExpenses[transaction.category] = 
+                        (categoryExpenses[transaction.category] || 0) + transaction.amount;
+                }
 
                 // YTD calculations
                 if (year === currentYear) {
@@ -69,23 +72,23 @@ function loadAnalytics() {
             // Calculate top category
             let topCategory = '-';
             let topAmount = 0;
-            Object.keys(categoryData).forEach(cat => {
-                if (categoryData[cat] > topAmount) {
-                    topAmount = categoryData[cat];
+            Object.keys(categoryExpenses).forEach(cat => {
+                if (categoryExpenses[cat] > topAmount) {
+                    topAmount = categoryExpenses[cat];
                     topCategory = cat;
                 }
             });
 
             // Calculate averages and savings rate
-            const monthKeys = Object.keys(monthlyData);
+            const months = Object.keys(monthlyData);
             let totalMonthlyIncome = 0;
             let totalMonthlyExpense = 0;
-            monthKeys.forEach(month => {
+            months.forEach(month => {
                 totalMonthlyIncome += monthlyData[month].income;
                 totalMonthlyExpense += monthlyData[month].expense;
             });
-            const avgMonthlyIncome = monthKeys.length > 0 ? totalMonthlyIncome / monthKeys.length : 0;
-            const avgMonthlyExpense = monthKeys.length > 0 ? totalMonthlyExpense / monthKeys.length : 0;
+            const avgMonthlyIncome = months.length > 0 ? totalMonthlyIncome / months.length : 0;
+            const avgMonthlyExpense = months.length > 0 ? totalMonthlyExpense / months.length : 0;
             const savingsRate = avgMonthlyIncome > 0 ? ((avgMonthlyIncome - avgMonthlyExpense) / avgMonthlyIncome * 100) : 0;
 
             // Update summary
@@ -96,14 +99,15 @@ function loadAnalytics() {
             document.getElementById('avgMonthlyExpense').textContent = formatCurrency(avgMonthlyExpense);
             document.getElementById('avgMonthlyIncome').textContent = formatCurrency(avgMonthlyIncome);
 
-            updateExpenseChart(categoryData);
+            updateExpenseChart(categoryExpenses);
             updateComparisonChart(monthlyData);
-        }, (error) => {
+        })
+        .catch((error) => {
             console.error('Error loading analytics:', error);
         });
 }
 
-function updateExpenseChart(categoryData) {
+function updateExpenseChart(categoryExpenses) {
     const ctx = document.getElementById('expenseChart');
     if (!ctx) return;
     
@@ -113,31 +117,17 @@ function updateExpenseChart(categoryData) {
         expenseChart.destroy();
     }
 
-    const labels = Object.keys(categoryData);
-    const data = Object.values(categoryData);
+    const labels = Object.keys(categoryExpenses);
+    const data = Object.values(categoryExpenses);
 
     if (labels.length === 0) {
         canvas.clearRect(0, 0, ctx.width, ctx.height);
         canvas.font = '16px sans-serif';
         canvas.fillStyle = '#6B7280';
         canvas.textAlign = 'center';
-        canvas.fillText('No transaction data available', ctx.width / 2, ctx.height / 2);
+        canvas.fillText('No expense data available', ctx.width / 2, ctx.height / 2);
         return;
     }
-
-    const incomeColors = ['#10B981', '#22C55E', '#16A34A', '#15803D', '#166534', '#14532D'];
-    const expenseColors = ['#EF4444', '#DC2626', '#B91C1C', '#991B1B', '#7F1D1D', '#450A0A', '#F97316', '#EA580C', '#C2410C', '#9A3412', '#7C2D12', '#431407'];
-    
-    let incomeIndex = 0;
-    let expenseIndex = 0;
-    
-    const colors = labels.map(label => {
-        if (label.includes('(income)')) {
-            return incomeColors[incomeIndex++ % incomeColors.length];
-        } else {
-            return expenseColors[expenseIndex++ % expenseColors.length];
-        }
-    });
 
     expenseChart = new Chart(canvas, {
         type: 'pie',
@@ -145,37 +135,31 @@ function updateExpenseChart(categoryData) {
             labels: labels,
             datasets: [{
                 data: data,
-                backgroundColor: colors,
-                borderWidth: 2,
-                borderColor: '#ffffff'
+                backgroundColor: [
+                    '#10B981',
+                    '#059669',
+                    '#34D399',
+                    '#6EE7B7',
+                    '#A7F3D0',
+                    '#F59E0B',
+                    '#EF4444',
+                    '#F97316'
+                ]
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            animation: {
-                duration: 500
-            },
             plugins: {
                 legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 20,
-                        usePointStyle: true,
-                        font: {
-                            size: 12
-                        }
-                    }
+                    position: 'bottom'
                 },
                 tooltip: {
-                    backgroundColor: '#1F2937',
-                    titleColor: '#ffffff',
-                    bodyColor: '#ffffff',
-                    borderColor: '#E5E7EB',
-                    borderWidth: 1,
                     callbacks: {
                         label: function(context) {
-                            return `${context.label}: ${formatCurrency(context.parsed)}`;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                            return `${context.label}: ${formatCurrency(context.parsed)} (${percentage}%)`;
                         }
                     }
                 }
@@ -194,16 +178,7 @@ function updateComparisonChart(monthlyData) {
         comparisonChart.destroy();
     }
 
-    const months = Object.keys(monthlyData).sort((a, b) => {
-        const [yearA, monthA] = a.split('-').map(Number);
-        const [yearB, monthB] = b.split('-').map(Number);
-        return yearA !== yearB ? yearA - yearB : monthA - monthB;
-    });
-    const monthLabels = months.map(month => {
-        const [year, monthNum] = month.split('-');
-        const date = new Date(year, monthNum - 1);
-        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
-    });
+    const months = Object.keys(monthlyData).sort();
     const incomeData = months.map(month => monthlyData[month].income);
     const expenseData = months.map(month => monthlyData[month].expense);
 
@@ -219,47 +194,23 @@ function updateComparisonChart(monthlyData) {
     comparisonChart = new Chart(canvas, {
         type: 'bar',
         data: {
-            labels: monthLabels,
+            labels: months,
             datasets: [{
                 label: 'Income',
                 data: incomeData,
-                backgroundColor: '#10B981',
-                borderRadius: 4
+                backgroundColor: '#10B981'
             }, {
                 label: 'Expense',
                 data: expenseData,
-                backgroundColor: '#EF4444',
-                borderRadius: 4
+                backgroundColor: '#EF4444'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            animation: {
-                duration: 500
-            },
             plugins: {
                 legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 20,
-                        usePointStyle: true,
-                        font: {
-                            size: 12
-                        }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: '#1F2937',
-                    titleColor: '#ffffff',
-                    bodyColor: '#ffffff',
-                    borderColor: '#E5E7EB',
-                    borderWidth: 1,
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`;
-                        }
-                    }
+                    position: 'bottom'
                 }
             },
             scales: {

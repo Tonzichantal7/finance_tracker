@@ -32,101 +32,61 @@
                 </div>
             </div>
 
-            <!-- Right Auth Form Section -->
-            <div class="auth-form-section">
-                <div class="auth-card">
-                    <div class="auth-tabs">
-                        <button class="tab-button active" id="signInTab">Sign In</button>
-                        <button class="tab-button" id="signUpTab">Create Account</button>
-                    </div>
+<!-- Authentication Section -->
+<div class="auth-form-section">
 
-                    <!-- Sign In Form -->
-                    <div class="auth-form active" id="signInForm">
-                        <form id="signInFormElement">
-                            <div class="form-group">
-                                <label for="signInEmail">Email</label>
-                                <div class="input-wrapper">
-                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                        <path d="M2.5 6.66667L10 11.6667L17.5 6.66667M3.33333 15H16.6667C17.5871 15 18.3333 14.2538 18.3333 13.3333V6.66667C18.3333 5.74619 17.5871 5 16.6667 5H3.33333C2.41286 5 1.66667 5.74619 1.66667 6.66667V13.3333C1.66667 14.2538 2.41286 15 3.33333 15Z" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <input type="email" id="signInEmail" placeholder="you@example.com" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="signInPassword">Password</label>
-                                <div class="input-wrapper">
-                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                        <path d="M15.8333 9.16667H4.16667C3.24619 9.16667 2.5 9.91286 2.5 10.8333V16.6667C2.5 17.5871 3.24619 18.3333 4.16667 18.3333H15.8333C16.7538 18.3333 17.5 17.5871 17.5 16.6667V10.8333C17.5 9.91286 16.7538 9.16667 15.8333 9.16667Z" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M5.83333 9.16667V5.83333C5.83333 4.72827 6.27232 3.66846 7.05372 2.88706C7.83512 2.10565 8.89493 1.66667 10 1.66667C11.1051 1.66667 12.1649 2.10565 12.9463 2.88706C13.7277 3.66846 14.1667 4.72827 14.1667 5.83333V9.16667" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <input type="password" id="signInPassword" placeholder="••••••••" required>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn-primary">Sign In</button>
-                            <div class="divider">
-                                <span>Or continue with</span>
-                            </div>
-                            <button type="button" class="btn-google" id="googleSignIn">
-                                <svg width="18" height="18" viewBox="0 0 18 18">
-                                    <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
-                                    <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
-                                    <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.348 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/>
-                                    <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z"/>
-                                </svg>
-                                Continue with Google
-                            </button>
-                        </form>
-                        <div id="authError" class="error-message"></div>
-                    </div>
+    <!-- Card Container -->
+    <div class="auth-card">
 
-                    <!-- Sign Up Form -->
-                    <div class="auth-form" id="signUpForm">
-                        <form id="signUpFormElement">
-                            <div class="form-group">
-                                <label for="signUpName">Name</label>
-                                <div class="input-wrapper">
-                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                        <path d="M10 10C12.3012 10 14.1667 8.13451 14.1667 5.83333C14.1667 3.53215 12.3012 1.66667 10 1.66667C7.69881 1.66667 5.83333 3.53215 5.83333 5.83333C5.83333 8.13451 7.69881 10 10 10Z" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M17.1583 18.3333C17.1583 15.1083 13.95 12.5 10 12.5C6.04999 12.5 2.84166 15.1083 2.84166 18.3333" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <input type="text" id="signUpName" placeholder="John Doe" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="signUpEmail">Email</label>
-                                <div class="input-wrapper">
-                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                        <path d="M2.5 6.66667L10 11.6667L17.5 6.66667M3.33333 15H16.6667C17.5871 15 18.3333 14.2538 18.3333 13.3333V6.66667C18.3333 5.74619 17.5871 5 16.6667 5H3.33333C2.41286 5 1.66667 5.74619 1.66667 6.66667V13.3333C1.66667 14.2538 2.41286 15 3.33333 15Z" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <input type="email" id="signUpEmail" placeholder="you@example.com" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="signUpPassword">Password</label>
-                                <div class="input-wrapper">
-                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                        <path d="M15.8333 9.16667H4.16667C3.24619 9.16667 2.5 9.91286 2.5 10.8333V16.6667C2.5 17.5871 3.24619 18.3333 4.16667 18.3333H15.8333C16.7538 18.3333 17.5 17.5871 17.5 16.6667V10.8333C17.5 9.91286 16.7538 9.16667 15.8333 9.16667Z" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M5.83333 9.16667V5.83333C5.83333 4.72827 6.27232 3.66846 7.05372 2.88706C7.83512 2.10565 8.89493 1.66667 10 1.66667C11.1051 1.66667 12.1649 2.10565 12.9463 2.88706C13.7277 3.66846 14.1667 4.72827 14.1667 5.83333V9.16667" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <input type="password" id="signUpPassword" placeholder="••••••••" required minlength="6">
-                                </div>
-                            </div>
-                            <button type="submit" class="btn-primary">Create Account</button>
-                            <div class="divider">
-                                <span>Or continue with</span>
-                            </div>
-                            <button type="button" class="btn-google" id="googleSignUp">
-                                <svg width="18" height="18" viewBox="0 0 18 18">
-                                    <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
-                                    <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
-                                    <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.348 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/>
-                                    <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z"/>
-                                </svg>
-                                Google
-                            </button>
-                        </form>
-                        <div id="signUpError" class="error-message"></div>
-                    </div>
+        <!-- Tabs -->
+        <div class="auth-tabs">
+            <button class="tab-button active" id="signInTab">Sign In</button>
+            <button class="tab-button" id="signUpTab">Create Account</button>
+        </div>
+
+        <!-- Sign In Form -->
+        <div class="auth-form active" id="signInForm">
+            <form id="signInFormElement">
+                <div class="form-group">
+                    <label for="signInEmail">Email</label>
+                    <input type="email" id="signInEmail" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="signInPassword">Password</label>
+                    <input type="password" id="signInPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary">Sign In</button>
+                <div class="divider">Or continue with</div>
+                <button type="button" class="btn-google" id="googleSignIn">Google</button>
+            </form>
+            <div id="authError" class="error-message"></div>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div class="auth-form" id="signUpForm">
+            <form id="signUpFormElement">
+                <div class="form-group">
+                    <label for="signUpName">Name</label>
+                    <input type="text" id="signUpName" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="signUpEmail">Email</label>
+                    <input type="email" id="signUpEmail" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="signUpPassword">Password</label>
+                    <input type="password" id="signUpPassword" placeholder="••••••••" required minlength="6">
+                </div>
+                <button type="submit" class="btn-primary">Create Account</button>
+                <div class="divider">Or continue with</div>
+                <button type="button" class="btn-google" id="googleSignUp">Google</button>
+            </form>
+            <div id="signUpError" class="error-message"></div>
+        </div>
+
+    </div>
+</div>
+
 
                     <!-- Welcome Message (hidden initially) -->
                     <div class="welcome-message" id="welcomeMessage" style="display: none;">
@@ -332,3 +292,4 @@
     <script src="app.js"></script>
 </body>
 </html>
+
