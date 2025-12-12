@@ -137,15 +137,26 @@ function initSettingsForms() {
 
             const displayName = document.getElementById('displayName').value;
 
+            // Validate input
+            if (!SecurityUtils.validateEmail(user.email)) {
+                alert('Invalid email format');
+                return;
+            }
+
+            const sanitizedName = SecurityUtils.sanitizeHTML(displayName);
+            if (sanitizedName !== displayName) {
+                alert('Invalid characters in name');
+                return;
+            }
+
             try {
-                await user.updateProfile({ displayName });
+                await user.updateProfile({ displayName: sanitizedName });
                 await db.collection('users').doc(user.uid).update({
-                    name: displayName
+                    name: sanitizedName
                 });
                 alert('Profile updated successfully!');
             } catch (error) {
-                console.error('Error updating profile:', error);
-                alert('Error updating profile. Please try again.');
+                alert(SecurityUtils.handleSecureError(error, 'Error updating profile. Please try again.'));
             }
         });
     }
@@ -164,104 +175,65 @@ function initSettingsForms() {
                 return;
             }
 
+            if (newPassword.length < 6) {
+                alert('Password must be at least 6 characters long');
+                return;
+            }
+
+            // Rate limiting for password changes
+            if (!SecurityUtils.checkRateLimit(user.uid + '_password', 3, 300000)) {
+                alert('Too many password change attempts. Please wait 5 minutes.');
+                return;
+            }
+
             try {
                 await user.updatePassword(newPassword);
                 alert('Password changed successfully!');
                 passwordForm.reset();
+                document.getElementById('passwordModal').classList.remove('show');
             } catch (error) {
-                console.error('Error changing password:', error);
-                alert('Error changing password. Please try again.');
+                alert(SecurityUtils.handleSecureError(error, 'Error changing password. Please try again.'));
             }
         });
     }
 
     if (deleteBtn) {
         deleteBtn.addEventListener('click', async () => {
-            if (!confirm('Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently deleted.')) {
+            if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
                 return;
             }
 
             const user = auth.currentUser;
-            if (!user) {
-                alert('You must be logged in to delete your account');
-                return;
-            }
+            if (!user) return;
 
-            const userUid = user.uid; // Store UID before deletion
-            const userEmail = user.email; // Store email for logging
-
+            const userUid = user.uid;
+            
             try {
-                console.log('Starting account deletion for user:', userUid);
-                
-                // IMPORTANT: Try to delete Firebase Auth account FIRST
-                // This way if it fails, we don't lose Firestore data
-                console.log('Attempting to delete Firebase Auth account...');
-                try {
-                    await user.delete();
-                    console.log('Firebase Auth account deleted successfully');
-                } catch (authError) {
-                    console.error('Auth deletion error:', authError);
-                    if (authError.code === 'auth/requires-recent-login') {
-                        alert('For security reasons, Firebase requires recent authentication to delete your account.\n\nPlease log out and log back in, then try deleting your account again.\n\nYour data has NOT been deleted.');
-                        return; // Don't proceed with Firestore deletion
-                    } else {
-                        // Other auth errors - still try to proceed but warn user
-                        throw authError; // Re-throw to be caught by outer catch
-                    }
-                }
-                
-                // Only delete Firestore data if Auth deletion succeeded
-                console.log('Deleting Firestore data...');
+                // Delete Firestore data
                 const batch = db.batch();
                 
-                // Delete all transactions
                 const transactionsSnapshot = await db.collection('transactions')
                     .where('userId', '==', userUid)
                     .get();
                 
-                console.log(`Found ${transactionsSnapshot.size} transactions to delete`);
                 transactionsSnapshot.forEach((doc) => {
                     batch.delete(doc.ref);
                 });
 
-                // Delete user document
-                const userRef = db.collection('users').doc(userUid);
-                batch.delete(userRef);
-
+                batch.delete(db.collection('users').doc(userUid));
                 await batch.commit();
-                console.log('Firestore data deleted successfully');
 
-                // Sign out to clear local session
-                await auth.signOut();
-                console.log('User signed out');
+                // Delete Firebase Auth account
+                await user.delete();
 
-                alert('Account deleted successfully! You will be redirected to the login page.');
-                
-                // Redirect to login page
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1000);
+                alert('Account deleted successfully!');
+                window.location.replace('index.html');
                 
             } catch (error) {
-                console.error('Error deleting account:', error);
-                console.error('Error code:', error.code);
-                console.error('Error message:', error.message);
-                
-                // Check if Auth account was deleted but Firestore deletion failed
-                // In that case, try to clean up what we can
-                if (error.code === 'auth/user-token-expired' || error.code === 'auth/user-not-found') {
-                    // Auth account might already be deleted, try to delete Firestore data with admin-like approach
-                    // But we can't do this from client side, so just inform user
-                    alert('Account deletion partially completed. Some data may remain. Please contact support if you continue to see issues.');
-                    await auth.signOut();
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
                 if (error.code === 'auth/requires-recent-login') {
-                    alert('For security reasons, you need to log out and log back in before deleting your account. Please try again after logging in.');
+                    alert('Please log out and log back in, then try again.');
                 } else {
-                    alert('Error deleting account: ' + error.message + '\n\nError code: ' + error.code + '\n\nPlease try logging out and logging back in, then try again.');
+                    alert('Error deleting account. Please try again.');
                 }
             }
         });

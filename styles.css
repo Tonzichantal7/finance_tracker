@@ -1599,6 +1599,45 @@ body {
     background: #dc2626;
 }
 
+.btn-danger:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.danger-actions {
+    margin-top: 16px;
+}
+
+.danger-warning {
+    color: var(--danger-color);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.danger-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.danger-list li {
+    color: var(--text-secondary);
+    padding: 4px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.danger-list li::before {
+    content: '•';
+    color: var(--danger-color);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
 .delete-warning {
     background: #FEE2E2;
     border: 1px solid #EF4444;
